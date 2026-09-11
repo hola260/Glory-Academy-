@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Application {
+  id              String   @id @default(cuid())
+  referenceNumber String   @unique
+  firstName       String
+  lastName        String
+  email           String
+  phone           String
+  dateOfBirth     String
+  gender          String
+  program         String
+  previousSchool  String?
+  guardianName    String
+  guardianPhone   String
+  guardianEmail   String?
+  address         String
+  status          String   @default("pending") // pending, reviewing, accepted, rejected
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  documents Document[]
+}
+
+model Document {
+  id            String   @id @default(cuid())
+  applicationId String
+  type          String   // academic_records, student_photo, id_document, payment_proof
+  fileName      String
+  filePath      String
+  fileSize      Int
+  mimeType      String
+  createdAt     DateTime @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+}
